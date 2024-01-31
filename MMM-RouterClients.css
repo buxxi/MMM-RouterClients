@@ -1,0 +1,34 @@
+@keyframes new-device {
+    50% {
+      opacity: 0;
+    }
+  }
+
+.MMM-RouterClients .fa-stack sub {
+    position: relative;
+    font-size: 0.45em;
+    left: 1.5em;
+    padding: 0.1em 0.5em;
+    font-weight: bold;
+}
+
+.MMM-RouterClients .icon {
+    text-align: center;
+}
+
+.MMM-RouterClients td {
+    padding: 0 0.5em;
+}
+
+.MMM-RouterClients .icon, .MMM-RouterClients .protected {
+    padding: 0 0.25em;
+}
+
+.MMM-RouterClients .new-device i {
+    animation: new-device 2s linear infinite;
+    font-size: 0.8em;
+
+    /* Must be a better way than this */
+    position: relative;
+    top: -0.1em;
+}

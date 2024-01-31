@@ -1,0 +1,10 @@
+{
+    "WIFI_2.4G" : "Trådlöst 2.4Ghz",
+    "WIFI_5G" : "Trådlöst 5Ghz",
+    "GUEST_WIFI_2.4G" : "Trådlöst gäst 2.4Ghz",
+    "GUEST_WIFI_5G" : "Trådlöst gäst 5Ghz",
+    "WIRED" : "Kabelanslutet",
+    "NO_CLIENT_NAME" : "okänd",
+    "NEW_CLIENTS_TITLE" : "Nya enheter anslutna",
+    "ROUTER_DATA_ERROR" : "Misslyckades med att hämta klienter"
+}

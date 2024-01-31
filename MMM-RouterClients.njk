@@ -1,0 +1,44 @@
+<table class="small">
+{% for interface in interfaces %}
+<tr>
+	<td class="icon bright">
+        <span class="fa-stack">
+            <i class="fas {{interface.icon}} fa-stack-1x"></i>
+            {% if interface.iconSub %}
+                <sub>{{interface.iconSub}}</sub>
+            {% endif %}
+        </span>
+    </td>
+    {% if config.showProtected %}
+    <td class="protected">
+        <span class="xsmall">
+            {% if interface.protected %}
+                <i class="fas fa-lock"></i>
+            {% else %}
+                <i class="fas fa-lock-open"></i>
+            {% endif %}
+        </span> 
+	</td>
+    {% endif %}
+    {% if config.showInterfaceName %}
+	<td class="name bright align-left">
+		{{interface.name}}
+        {% if interface.ssid and config.showSSID %} ({{interface.ssid}}) {% endif %}
+	</td>
+    {% endif %}
+    {% if config.showClientNames %}
+	<td class="clients align-right">
+    {% for client in interface.clients %}
+        {% if not loop.first %},{% endif %}
+        {% if client.new %}
+            <span class="new-device bright"><i class="fas fa-circle-exclamation"></i> {{client.name}}</span>
+        {% else %}
+            {{client.name}}
+        {% endif %}
+    {% endfor %}
+    </td>
+    {% else %}
+    <td class="clients align-right">{{interface.clients.length}}</td></tr>
+    {% endif %}
+{% endfor %}
+</table>

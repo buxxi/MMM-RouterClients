@@ -1,0 +1,10 @@
+{
+    "WIFI_2.4G" : "Wireless 2.4Ghz",
+    "WIFI_5G" : "Wireless 5Ghz",
+    "GUEST_WIFI_2.4G" : "Guest 2.4Ghz",
+    "GUEST_WIFI_5G" : "Guest 5Ghz",
+    "WIRED" : "Wired",
+    "NO_CLIENT_NAME" : "unknown",
+    "NEW_CLIENTS_TITLE" : "New clients connected",
+    "ROUTER_DATA_ERROR" : "Failed to fetch clients"
+}

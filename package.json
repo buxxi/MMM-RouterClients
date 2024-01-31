@@ -1,0 +1,13 @@
+{
+  "name": "mmm-routerclients",
+  "version": "1.0.0",
+  "description": "A module for MagicMirror that displays the connected clients to your router",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/buxxi/MMM-RouterClients.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "node-ssh": "^13.1.0"
+  }
+}
