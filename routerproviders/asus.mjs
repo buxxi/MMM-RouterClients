@@ -6,6 +6,9 @@
  */
 import {RouterProvider,RouterInterface,RouterClient,RouterInterfaceType} from "../routerprovider.mjs";
 import {NodeSSH} from 'node-ssh';
+import {Mutex} from 'async-mutex';
+
+const mutex = new Mutex();
 
 class AsusDelegatingRouterProvider extends RouterProvider {
     constructor(config) {
@@ -20,15 +23,22 @@ class AsusDelegatingRouterProvider extends RouterProvider {
     }
 
     async connect() {
+        //Only allow one connection at the time
+        this.lock = {release : await mutex.acquire() };
         return this.delegate.connect();
     }
 
     async getInterfaces(session) {
         return this.delegate.getInterfaces(session);
     }
-
-    async dispose(session) {
-        return this.delegate.disconnect(session);
+    
+    async disconnect(session) {
+        try {
+            await this.delegate.disconnect(session);
+        } finally {
+            //Release the lock
+            this.lock.release();
+        }
     }
 }
 

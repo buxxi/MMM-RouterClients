@@ -1,9 +1,3 @@
-@keyframes new-device {
-    50% {
-      opacity: 0;
-    }
-  }
-
 .MMM-RouterClients .fa-stack sub {
     position: relative;
     font-size: 0.45em;
@@ -24,11 +18,11 @@
     padding: 0 0.25em;
 }
 
-.MMM-RouterClients .new-device i {
-    animation: new-device 2s linear infinite;
-    font-size: 0.8em;
+.MMM-RouterClients .new-device {
+    font-weight: bold;
+}
 
-    /* Must be a better way than this */
-    position: relative;
-    top: -0.1em;
+.MMM-RouterClients .new-device i {
+    font-size: 0.8em;
+    color: #ff6161;
 }

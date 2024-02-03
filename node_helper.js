@@ -9,13 +9,17 @@ module.exports = NodeHelper.create({
 	firstSeen: {},
 
 	start: async function() {
+		let self = this;
 		try {
-			firstSeen = JSON.parse(await fs.readFile(DATA_FILE));
-		} catch (e) {}
+			self.firstSeen = JSON.parse(await fs.readFile(DATA_FILE));
+		} catch (e) {
+			Log.warn(`Could not read: ${DATA_FILE}: ${e}`);
+		}
 	},
 	
 	socketNotificationReceived: async function(notification, payload) {
 		let self = this;
+		console.log("event");
 		if (notification == "GET_ROUTER_DATA") {
 			try {
 				let provider = await self.getProvider(payload);

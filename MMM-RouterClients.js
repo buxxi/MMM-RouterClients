@@ -11,8 +11,8 @@ Module.register("MMM-RouterClients",{
 		showProtected: true,
 		showSSID: true,
 		alertNewClients: true,
-		newDuration: 1000 * 60 * 60 * 24, //One full day, TODO: rename
-		updateInterval: 1000 * 60,
+		newDuration: 1000 * 60 * 60 * 24, // One full day
+		updateInterval: 1000 * 60 * 60, // Every hour 
 		persistData: false,
 		provider: null,
 		host: null,
@@ -28,6 +28,9 @@ Module.register("MMM-RouterClients",{
 		let self = this;
 		self.interfaces = [];
 		self.sendSocketNotification("GET_ROUTER_DATA", self.config);
+		setTimeout(() => {
+			self.sendSocketNotification("GET_ROUTER_DATA", self.config);
+		}, self.config.updateInterval);
 	},
 
 	getTemplate: function () {
@@ -62,9 +65,6 @@ Module.register("MMM-RouterClients",{
 				self.alertNewClients(newClients);
 			}
 			self.updateDom();
-			setTimeout(() => {
-				self.sendSocketNotification("GET_ROUTER_DATA", self.config);
-			}, self.config.updateInterval);
 		} else if (notification == "ROUTER_DATA_ERROR") {
 			this.sendNotification("SHOW_ALERT", { 
 				title : this.name + ": " + self.translate("ROUTER_DATA_ERROR"),
