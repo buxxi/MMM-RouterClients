@@ -19,7 +19,6 @@ module.exports = NodeHelper.create({
 	
 	socketNotificationReceived: async function(notification, payload) {
 		let self = this;
-		console.log("event");
 		if (notification == "GET_ROUTER_DATA") {
 			try {
 				let provider = await self.getProvider(payload);
