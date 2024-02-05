@@ -28,7 +28,7 @@ Module.register("MMM-RouterClients",{
 		let self = this;
 		self.interfaces = [];
 		self.sendSocketNotification("GET_ROUTER_DATA", self.config);
-		setTimeout(() => {
+		setInterval(() => {
 			self.sendSocketNotification("GET_ROUTER_DATA", self.config);
 		}, self.config.updateInterval);
 	},
