@@ -19,7 +19,7 @@ class AsusDelegatingRouterProvider extends RouterProvider {
         if (!config.host) {
             throw new Error("host is required when connecting to asus router");
         }
-        this.delegate = config.protocol == "ssh" ? new AsusSshRouterProvider(config) : new AsusWebRouterProvider(config);
+        this.delegate = config.protocol === "ssh" ? new AsusSshRouterProvider(config) : new AsusWebRouterProvider(config);
     }
 
     async connect() {
@@ -129,12 +129,12 @@ class AsusSshRouterProvider extends RouterProvider {
 
     async getConnectedMacs(session) {
         let out = await this.execCommand(session, '/sbin/arp -n');
-        return out.split("\n").map(line => /\(([0-9\.]+)\) at ([0-9a-f:]+).*on br0/.exec(line)).filter(match => !!match).map(match => match[2].toLowerCase());
+        return out.split("\n").map(line => /\(([0-9.]+)\) at ([0-9a-f:]+).*on br0/.exec(line)).filter(match => !!match).map(match => match[2].toLowerCase());
     }
 
     async getDeviceNames(session) {
         let out = await this.execCommand(session, '/bin/cat /var/lib/misc/dnsmasq.leases');
-        return out.split("\n").map(line => line.split(" ")).map(cols => ({'mac' : cols[1].toLowerCase(), 'name' : cols[3] == '*' ? null : cols[3]}));
+        return out.split("\n").map(line => line.split(" ")).map(cols => ({'mac' : cols[1].toLowerCase(), 'name' : cols[3] === '*' ? null : cols[3]}));
     }
 
     async getWifiInterfaceInfo(session, iface) {
@@ -145,7 +145,7 @@ class AsusSshRouterProvider extends RouterProvider {
         let ssid = /SSID: "(.*)"/.exec(statusOut)[1];
         let freq = /Chanspec: (.*?)GHz/.exec(statusOut)[1];
         
-        let isProtected = protectedOut != "0x0 Disabled";
+        let isProtected = protectedOut !== "0x0 Disabled";
         return {
             clients: clients,
             ssid: ssid,
@@ -197,8 +197,8 @@ class AsusSshRouterProvider extends RouterProvider {
     }
 
     parseClient(mac, names, nickNames) {
-        let name = names.find(d => d.mac == mac);
-        let nickname = nickNames.find(d => d.mac == mac);
+        let name = names.find(d => d.mac === mac);
+        let nickname = nickNames.find(d => d.mac === mac);
         if (nickname) {
             return new RouterClient(mac, nickname.name.toLowerCase());
         }
@@ -260,7 +260,7 @@ class AsusWebRouterProvider extends RouterProvider {
 
     async getInterfaces(session) {
         let token = session;
-        let clients = (await this.getClientInfo(token)).filter(client => client.isOnline == '1');
+        let clients = (await this.getClientInfo(token)).filter(client => client.isOnline === '1');
         let interfaces = await this.getInterfaceInfo(token);
 
         return [
@@ -321,9 +321,9 @@ class AsusWebRouterProvider extends RouterProvider {
         let data = await response.json();
 
         for (let i of result) {
-            if (data[`wl${i.id}_bss_enabled`] == '1') {
+            if (data[`wl${i.id}_bss_enabled`] === '1') {
                 i['ssid'] = decodeURIComponent(data[`wl${i.id}_ssid`]);
-                i['protected'] = data[`wl${i.id}_auth_mode_x`] != 'open';
+                i['protected'] = data[`wl${i.id}_auth_mode_x`] !== 'open';
             } else {
                 i['id'] = null;
             }
@@ -333,10 +333,10 @@ class AsusWebRouterProvider extends RouterProvider {
     }
 
     parseInterface(type, clients, interfaces, isWL, isGN) {
-        let iface = interfaces.find(i => i.isWL == isWL && i.isGN == isGN);
+        let iface = interfaces.find(i => i.isWL === isWL && i.isGN === isGN);
         let ssid = iface ? iface.ssid : null;
         let isProtected = iface ? iface.protected : false;
-        return new RouterInterface(type, isProtected, ssid, clients.filter(client => client.isWL == isWL && client.isGN == isGN).map(client => this.parseClient(client)));
+        return new RouterInterface(type, isProtected, ssid, clients.filter(client => client.isWL === isWL && client.isGN === isGN).map(client => this.parseClient(client)));
     }
 
     parseClient(client) {

@@ -19,7 +19,7 @@ module.exports = NodeHelper.create({
 	
 	socketNotificationReceived: async function(notification, payload) {
 		let self = this;
-		if (notification == "GET_ROUTER_DATA") {
+		if (notification === "GET_ROUTER_DATA") {
 			try {
 				let provider = await self.getProvider(payload);
 				var data;
@@ -60,13 +60,13 @@ module.exports = NodeHelper.create({
 
 	transformData: function(interfaces, config) {
 		let self = this;
-		return interfaces.map(interface => self.transformInterface(interface, config));
+		return interfaces.map(iface => self.transformInterface(iface, config));
 	},
 
-	transformInterface: function(interface, config) {
+	transformInterface: function(iface, config) {
 		let self = this;
-		let clients = interface.clients.map(client => self.transformClient(client, config));
-		return {'type' : interface.type, 'protected': interface.isProtected, 'ssid': interface.ssid, clients };
+		let clients = iface.clients.map(client => self.transformClient(client, config));
+		return {'type' : iface.type, 'protected': iface.isProtected, 'ssid': iface.ssid, clients };
 	},
 
 	transformClient: function(client, config) {
