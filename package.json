@@ -9,6 +9,6 @@
   "license": "MIT",
   "dependencies": {
     "async-mutex": "^0.4.1",
-    "node-ssh": "^13.1.0"
+    "ssh2": "^1.17.0"
   }
 }

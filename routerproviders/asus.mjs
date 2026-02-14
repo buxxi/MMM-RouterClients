@@ -5,7 +5,7 @@
  *  TUF-AX5400
  */
 import {RouterProvider,RouterInterface,RouterClient,RouterInterfaceType} from "../routerprovider.mjs";
-import {NodeSSH} from 'node-ssh';
+import {Client as SSHClient} from 'ssh2';
 import {Mutex} from 'async-mutex';
 
 const mutex = new Mutex();
@@ -65,14 +65,28 @@ class AsusSshRouterProvider extends RouterProvider {
         }
     }
 
-    async connect() {
-        return new NodeSSH().connect({
-            host : this.host,
-            username: this.username,
-            password: this.password,
-            port: this.port,
-            privateKey: this.privateKey,
-            privateKeyPath: this.privateKeyPath
+    connect() {
+        let client = new SSHClient();
+
+        return new Promise((resolve, reject) => {
+            client.on('error', reject);
+            client.on('close', reject);
+            client.on('ready', () => {
+                client.removeListener('error', reject);
+                client.removeListener('close', resolve);
+                resolve(client);
+            });
+
+            client.connect(
+                {
+                    host : this.host,
+                    username: this.username,
+                    password: this.password,
+                    port: this.port,
+                    privateKey: this.privateKey,
+                    privateKeyPath: this.privateKeyPath
+                }
+            )
         });
     }
 
@@ -105,8 +119,12 @@ class AsusSshRouterProvider extends RouterProvider {
         return interfaces.filter(i => i.clients.length > 0);
     }
 
-    async disconnect(session) {
-        session.dispose();
+    disconnect(session) {
+        return new Promise((resolve, reject) => {
+            session.on('error', reject);
+            session.on('close', resolve);
+            session.end();
+        });
     }
 
     async getConnectedMacs(session) {
@@ -151,12 +169,31 @@ class AsusSshRouterProvider extends RouterProvider {
         return out.split("<").map(line => /(.*?)>(.*?)>/.exec(line)).map(match => ({'name' : match[1], 'mac' : match[2].toLowerCase()}));
     }
 
-    async execCommand(session, command) {
-        let result = await session.execCommand(command);
-        if (result.code != 0) {
-            throw new Exception("Failed to execute command: " + command + ", stderr: " + result.stderr);
-        }
-        return result.stdout; 
+    execCommand(session, command) {
+        return new Promise((resolve, reject) => {
+            session.on('error', reject);
+            session.exec(command, (err, stream) => {
+                if (err) {
+                    reject(err);
+                }
+                let stdout = "";
+                let stderr = "";
+                stream.on('close', (code, signal) => {
+                    session.removeListener('error', reject);
+                    if (code === 0) {
+                        resolve(stdout);
+                    } else {
+                        reject(new Error(`Command failed with code ${code} and signal ${signal}: ${stderr}`));
+                    }
+                });
+                stream.on('data', (data) => {
+                    stdout += data.toString().trim();
+                });
+                stream.stderr.on('data', (data) => {
+                    stderr += data.toString().trim();
+                });
+            });
+        });
     }
 
     parseClient(mac, names, nickNames) {
